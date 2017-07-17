@@ -100,7 +100,8 @@ fi
 # set spark related env variables
 if [[ "${INTERPRETER_ID}" == "spark" ]]; then
   if [[ -n "${SPARK_HOME}" ]]; then
-    export SPARK_SUBMIT="${SPARK_HOME}/bin/spark-submit"
+    # export SPARK_SUBMIT="${SPARK_HOME}/bin/spark-submit"
+    export SPARK_SUBMIT="${SPARK_HOME}/bin/spark-submit --master yarn-client"
     SPARK_APP_JAR="$(ls ${ZEPPELIN_HOME}/interpreter/spark/zeppelin-spark*.jar)"
     # This will evantually passes SPARK_APP_JAR to classpath of SparkIMain
     ZEPPELIN_INTP_CLASSPATH+=":${SPARK_APP_JAR}"

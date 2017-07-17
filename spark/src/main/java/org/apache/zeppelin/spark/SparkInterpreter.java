@@ -332,11 +332,17 @@ public class SparkInterpreter extends Interpreter {
     }
 
     conf.set("spark.scheduler.mode", "FAIR");
+    if (!isYarnMode()) {
+      conf.setMaster(getProperty("master"));
+    }
+
+    /* Don't set master if running in Yarn mode
     conf.setMaster(getProperty("master"));
     if (isYarnMode()) {
       conf.set("master", "yarn");
       conf.set("spark.submit.deployMode", "client");
     }
+    */
 
     Properties intpProperty = getProperty();
 
@@ -446,8 +452,14 @@ public class SparkInterpreter extends Interpreter {
       classServerUri = (String) Utils.invokeMethod(classServer, "uri");
     }
 
+/* Don't set master if running in Yarn mode
     conf.setMaster(getProperty("master"))
         .setAppName(getProperty("spark.app.name"));
+*/
+    if (!isYarnMode()) {
+      conf.setMaster(getProperty("master"))
+    }
+    conf.setAppName(getProperty("spark.app.name"));
 
     if (classServerUri != null) {
       conf.set("spark.repl.class.uri", classServerUri);
@@ -759,7 +771,7 @@ public class SparkInterpreter extends Interpreter {
      *
      * As hashCode() can return a negative integer value and the minus character '-' is invalid
      * in a package name we change it to a numeric value '0' which still conforms to the regexp.
-     * 
+     *
      */
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode()).replace('-', '0'));
 
@@ -839,7 +851,7 @@ public class SparkInterpreter extends Interpreter {
       sqlc = getSQLContext();
 
       dep = getDependencyResolver();
-      
+
       hooks = getInterpreterGroup().getInterpreterHookRegistry();
 
       z = new ZeppelinContext(sc, sqlc, null, dep, hooks,
