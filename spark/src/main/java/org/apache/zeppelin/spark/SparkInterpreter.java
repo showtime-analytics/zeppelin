@@ -457,7 +457,7 @@ public class SparkInterpreter extends Interpreter {
         .setAppName(getProperty("spark.app.name"));
 */
     if (!isYarnMode()) {
-      conf.setMaster(getProperty("master"))
+      conf.setMaster(getProperty("master"));
     }
     conf.setAppName(getProperty("spark.app.name"));
 
